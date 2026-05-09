@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Sport {
+  FOOTBALL
+  TENNIS
+  BASKETBALL
+  VOLLEYBALL
+  RUNNING
+  CYCLING
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  PROFESSIONAL
+}
+
+enum GroupStatus {
+  FORMING
+  CONFIRMED
+  EVENT_CREATED
+  COMPLETED
+  CANCELLED
+}
+
+enum EventStatus {
+  SCHEDULED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  avatarUrl String?
+  bio       String?
+  location  String?
+  lat       Float?
+  lng       Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sportPreferences SportPreference[]
+  availabilities   Availability[]
+  groupMembers     GroupMember[]
+  captainOf        Group[]           @relation("GroupCaptain")
+  messages         Message[]
+  pollVotes        PollVote[]
+
+  @@map("users")
+}
+
+model SportPreference {
+  id         String     @id @default(uuid())
+  userId     String
+  sport      Sport
+  skillLevel SkillLevel @default(BEGINNER)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sport])
+  @@map("sport_preferences")
+}
+
+model Availability {
+  id          String   @id @default(uuid())
+  userId      String
+  date        DateTime @db.Date
+  isAvailable Boolean  @default(false)
+  sports      Sport[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([date, isAvailable])
+  @@map("availabilities")
+}
+
+model Group {
+  id        String      @id @default(uuid())
+  sport     Sport
+  status    GroupStatus @default(FORMING)
+  captainId String
+  availDate DateTime    @db.Date
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  captain  User          @relation("GroupCaptain", fields: [captainId], references: [id])
+  members  GroupMember[]
+  event    Event?
+  messages Message[]
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id          String    @id @default(uuid())
+  groupId     String
+  userId      String
+  confirmedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("group_members")
+}
+
+model Event {
+  id           String      @id @default(uuid())
+  groupId      String      @unique
+  sport        Sport
+  venueName    String?
+  venueAddress String?
+  venueId      String?
+  lat          Float?
+  lng          Float?
+  scheduledAt  DateTime?
+  notes        String?
+  status       EventStatus @default(SCHEDULED)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  group Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  polls Poll[]
+
+  @@map("events")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  groupId   String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([groupId, createdAt])
+  @@map("messages")
+}
+
+model Poll {
+  id        String   @id @default(uuid())
+  eventId   String
+  question  String
+  createdAt DateTime @default(now())
+
+  event   Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  options PollOption[]
+
+  @@map("polls")
+}
+
+model PollOption {
+  id        String @id @default(uuid())
+  pollId    String
+  label     String
+  venueData Json?
+
+  poll  Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes PollVote[]
+
+  @@map("poll_options")
+}
+
+model PollVote {
+  id       String @id @default(uuid())
+  pollId   String
+  optionId String
+  userId   String
+
+  option PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, userId])
+  @@map("poll_votes")
+}
