@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx prisma *)",
+      "Bash(git checkout *)",
+      "Bash(Remove-Item \"d:\\\\Denis\\\\Programming\\\\HaufeHackathon\\\\sport-sync\\\\src\\\\components\\\\events\\\\VenuePicker.tsx\")"
+    ]
+  }
+}

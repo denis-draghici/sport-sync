@@ -65,10 +65,10 @@ export function ChatWindow({ groupId, initialMessages, currentUserId }: Props) {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto space-y-1 p-4 min-h-0">
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain p-2 scroll-pb-4 sm:p-4">
         {messages.length === 0 && (
-          <p className="text-center text-muted-foreground text-sm py-8">
+          <p className="px-3 py-8 text-center text-sm text-muted-foreground">
             No messages yet. Say hello! 👋
           </p>
         )}
@@ -77,7 +77,7 @@ export function ChatWindow({ groupId, initialMessages, currentUserId }: Props) {
         ))}
         <div ref={bottomRef} />
       </div>
-      <div className="border-t border-border p-3">
+      <div className="shrink-0 border-t border-border bg-card/95 p-2 sm:p-3">
         <ChatInput onSend={handleSend} disabled={sending} />
       </div>
     </div>

@@ -4,11 +4,11 @@ import { MobileNav } from "@/components/layout/MobileNav"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen app-surface">
       <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex min-h-screen min-w-0 flex-col">
         <TopNav />
-        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6">
+        <main className="flex-1 overflow-x-hidden px-3 py-4 pb-28 sm:px-4 lg:px-6 lg:py-6 lg:pb-6">
           {children}
         </main>
         <MobileNav />

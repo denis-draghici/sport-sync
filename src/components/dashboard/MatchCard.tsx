@@ -20,17 +20,17 @@ export function MatchCard({ group, currentUserId }: { group: GroupWithDetails; c
   const memberCount = group.members.length
 
   return (
-    <Card className="border-border bg-card hover:border-primary/30 transition-colors">
+    <Card className="border-border bg-card/95 transition-colors hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
       <CardContent className="pt-4 pb-4">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2">
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 items-center gap-2">
             <SportIcon sport={group.sport} size="md" />
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold">{SPORT_LABELS[group.sport]}</p>
               <p className="text-xs text-muted-foreground">{formatDateLabel(group.availDate)}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
             {isCaptain && (
               <Badge variant="secondary" className="text-xs text-primary border-primary/30 gap-1">
                 <Crown className="h-3 w-3" /> Captain
@@ -52,14 +52,16 @@ export function MatchCard({ group, currentUserId }: { group: GroupWithDetails; c
 
         {/* Event info */}
         {group.event?.scheduledAt && (
-          <p className="text-xs text-muted-foreground flex items-center gap-1 mb-3">
-            <Calendar className="h-3 w-3" />
-            {formatDateLabel(group.event.scheduledAt)}
-            {group.event.venueName && ` · ${group.event.venueName}`}
+          <p className="mb-3 flex items-start gap-1 text-xs text-muted-foreground">
+            <Calendar className="mt-0.5 h-3 w-3 shrink-0" />
+            <span className="break-words">
+              {formatDateLabel(group.event.scheduledAt)}
+              {group.event.venueName && ` · ${group.event.venueName}`}
+            </span>
           </p>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 min-[420px]:flex-row">
           <Button size="sm" variant="outline" className="flex-1 gap-2" asChild>
             <Link href={`/groups/${group.id}`}>
               <MessageCircle className="h-3.5 w-3.5" /> Open chat

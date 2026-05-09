@@ -18,18 +18,18 @@ export async function TopNav() {
     : "?"
 
   return (
-    <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm flex items-center justify-between px-4 lg:px-6 sticky top-0 z-40">
+    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card/75 px-3 shadow-sm shadow-background/20 backdrop-blur sm:h-16 sm:px-4 lg:px-6">
       {/* Mobile logo */}
-      <Link href="/dashboard" className="text-xl font-extrabold text-primary lg:hidden">
+      <Link href="/dashboard" className="truncate text-lg font-extrabold text-primary sm:text-xl lg:hidden">
         SportSync
       </Link>
 
       <div className="hidden lg:block" />
 
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
+            <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
               <Avatar className="h-9 w-9">
                 <AvatarImage src={profile?.avatarUrl ?? undefined} alt={profile?.name} />
                 <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">

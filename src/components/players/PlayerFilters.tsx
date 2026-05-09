@@ -31,7 +31,7 @@ export function PlayerFilters() {
 
   return (
     <div className="space-y-3">
-      <form onSubmit={handleSearch} className="flex gap-2">
+      <form onSubmit={handleSearch} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -41,13 +41,14 @@ export function PlayerFilters() {
             className="pl-9"
           />
         </div>
-        <Button type="submit" variant="secondary">Search</Button>
+        <Button type="submit" variant="secondary" className="sm:w-auto">Search</Button>
       </form>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
         <Button
           size="sm"
           variant={!currentSport ? "default" : "secondary"}
+          className="shrink-0"
           onClick={() => update("sport", null)}
         >
           All sports
@@ -57,6 +58,7 @@ export function PlayerFilters() {
             key={s}
             size="sm"
             variant={currentSport === s ? "default" : "secondary"}
+            className="shrink-0"
             onClick={() => update("sport", s)}
           >
             {SPORT_EMOJIS[s]} {SPORT_LABELS[s]}
@@ -65,10 +67,11 @@ export function PlayerFilters() {
       </div>
 
       {currentSport && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
           <Button
             size="sm"
             variant={!currentSkill ? "default" : "outline"}
+            className="shrink-0"
             onClick={() => update("skill", null)}
           >
             All levels
@@ -78,6 +81,7 @@ export function PlayerFilters() {
               key={sl}
               size="sm"
               variant={currentSkill === sl ? "default" : "outline"}
+              className="shrink-0"
               onClick={() => update("skill", sl)}
             >
               {SKILL_LEVEL_LABELS[sl]}

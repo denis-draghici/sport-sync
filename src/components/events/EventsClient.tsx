@@ -28,12 +28,12 @@ function EventCard({ event, currentUserId }: { event: EventWithGroup; currentUse
   const isCaptain = event.group.captainId === currentUserId
 
   return (
-    <Card className="border-border bg-card hover:border-primary/30 transition-colors">
+    <Card className="border-border bg-card/95 transition-colors hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
       <CardContent className="pt-4 pb-4">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2">
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 items-center gap-2">
             <SportIcon sport={event.sport} size="md" />
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold">{SPORT_LABELS[event.sport]}</p>
               {event.scheduledAt ? (
                 <p className="text-xs text-muted-foreground">{formatDateTime(event.scheduledAt)}</p>
@@ -42,7 +42,7 @@ function EventCard({ event, currentUserId }: { event: EventWithGroup; currentUse
               )}
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
             {isCaptain && (
               <Badge variant="secondary" className="text-xs text-primary border-primary/30 gap-1">
                 <Crown className="h-3 w-3" /> Captain
@@ -53,9 +53,10 @@ function EventCard({ event, currentUserId }: { event: EventWithGroup; currentUse
         </div>
 
         {event.venueName && (
-          <p className="text-xs text-muted-foreground flex items-center gap-1 mb-3">
-            <MapPin className="h-3 w-3" /> {event.venueName}
+          <p className="mb-3 flex items-start gap-1 text-xs text-muted-foreground">
+            <MapPin className="mt-0.5 h-3 w-3 shrink-0" /> <span className="break-words">{event.venueName}
             {event.venueAddress && ` · ${event.venueAddress}`}
+            </span>
           </p>
         )}
 
@@ -94,12 +95,12 @@ function AvailableEventCard({ event, onJoined }: { event: EventWithGroup; onJoin
   }
 
   return (
-    <Card className="border-border bg-card hover:border-primary/30 transition-colors">
+    <Card className="border-border bg-card/95 transition-colors hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
       <CardContent className="pt-4 pb-4">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2">
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 items-center gap-2">
             <SportIcon sport={event.sport} size="md" />
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold">{SPORT_LABELS[event.sport]}</p>
               {event.scheduledAt ? (
                 <p className="text-xs text-muted-foreground">{formatDateTime(event.scheduledAt)}</p>
@@ -112,21 +113,22 @@ function AvailableEventCard({ event, onJoined }: { event: EventWithGroup; onJoin
         </div>
 
         {event.venueName && (
-          <p className="text-xs text-muted-foreground flex items-center gap-1 mb-3">
-            <MapPin className="h-3 w-3" /> {event.venueName}
+          <p className="mb-3 flex items-start gap-1 text-xs text-muted-foreground">
+            <MapPin className="mt-0.5 h-3 w-3 shrink-0" /> <span className="break-words">{event.venueName}
             {event.venueAddress && ` · ${event.venueAddress}`}
+            </span>
           </p>
         )}
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
+          <div className="flex min-w-0 items-center gap-1.5">
             {event.group.members.slice(0, 5).map((m) => (
               <UserAvatar key={m.userId} name={m.user.name} avatarUrl={m.user.avatarUrl} size="sm" />
             ))}
             {event.group.members.length > 5 && (
               <span className="text-xs text-muted-foreground">+{event.group.members.length - 5}</span>
             )}
-            <span className="text-xs text-muted-foreground ml-1">
+            <span className="ml-1 truncate text-xs text-muted-foreground">
               by {event.group.captain.name}
             </span>
           </div>
@@ -160,11 +162,11 @@ export function EventsClient({ myEvents, availableEvents: initialAvailable, curr
 
   return (
     <Tabs defaultValue="upcoming">
-      <TabsList className="w-full mb-4">
-        <TabsTrigger value="upcoming" className="flex-1">
+      <TabsList className="mb-4 h-auto w-full gap-1 p-1">
+        <TabsTrigger value="upcoming" className="min-h-9 flex-1 px-2">
           Upcoming {myEvents.length > 0 && <Badge variant="secondary" className="ml-2 text-xs">{myEvents.length}</Badge>}
         </TabsTrigger>
-        <TabsTrigger value="available" className="flex-1">
+        <TabsTrigger value="available" className="min-h-9 flex-1 px-2">
           Available {availableEvents.length > 0 && <Badge variant="secondary" className="ml-2 text-xs">{availableEvents.length}</Badge>}
         </TabsTrigger>
       </TabsList>

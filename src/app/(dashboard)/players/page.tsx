@@ -32,7 +32,7 @@ export default async function PlayersPage({ searchParams }: Props) {
   const captainGroups = myGroups.filter((g) => g.captainId === authUser.id && g.status === "FORMING")
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="mx-auto max-w-5xl space-y-6">
       <PageHeader
         title="Find Players"
         description={inviteGroupId ? "Select players to invite to your group." : "Browse players by sport and skill level, then invite them to a group."}
@@ -49,7 +49,7 @@ export default async function PlayersPage({ searchParams }: Props) {
           description="Try a different sport or skill filter."
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {players.map((player) => (
             <PlayerCard
               key={player.id}

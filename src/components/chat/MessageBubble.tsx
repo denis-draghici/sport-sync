@@ -10,17 +10,17 @@ interface Props {
 
 export function MessageBubble({ message, isOwn }: Props) {
   return (
-    <div className={cn("flex items-end gap-2 mb-2", isOwn ? "flex-row-reverse" : "flex-row")}>
+    <div className={cn("mb-2 flex items-end gap-1.5 sm:gap-2", isOwn ? "flex-row-reverse" : "flex-row")}>
       {!isOwn && (
-        <UserAvatar name={message.user.name} avatarUrl={message.user.avatarUrl} size="sm" className="shrink-0 mb-1" />
+        <UserAvatar name={message.user.name} avatarUrl={message.user.avatarUrl} size="sm" className="mb-1 shrink-0 max-[360px]:hidden" />
       )}
-      <div className={cn("max-w-[75%] space-y-1", isOwn ? "items-end" : "items-start")}>
+      <div className={cn("max-w-[90%] space-y-1 max-[360px]:max-w-[94%] sm:max-w-[75%]", isOwn ? "items-end" : "items-start")}>
         {!isOwn && (
-          <p className="text-xs text-muted-foreground px-1">{message.user.name}</p>
+          <p className="truncate px-1 text-xs text-muted-foreground max-[360px]:hidden">{message.user.name}</p>
         )}
         <div
           className={cn(
-            "rounded-2xl px-3 py-2 text-sm leading-relaxed break-words",
+            "rounded-2xl px-3 py-2 text-sm leading-relaxed break-words shadow-sm max-[360px]:px-2.5",
             isOwn
               ? "bg-primary text-primary-foreground rounded-br-sm"
               : "bg-secondary text-foreground rounded-bl-sm"

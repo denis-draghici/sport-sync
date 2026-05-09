@@ -84,15 +84,15 @@ export function PlayerCard({ player, captainGroups, defaultInviteGroupId }: Prop
     : undefined
 
   return (
-    <Card className="border-border bg-card hover:border-primary/40 transition-colors">
-      <CardContent className="p-4 space-y-3">
+    <Card className="h-full border-border bg-card/95 transition-colors hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
+      <CardContent className="flex h-full flex-col space-y-3 p-4">
         <div className="flex items-start gap-3">
           <UserAvatar name={player.name} avatarUrl={player.avatarUrl} size="md" />
           <div className="flex-1 min-w-0">
             <p className="font-semibold truncate">{player.name}</p>
             {player.location && (
-              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                <MapPin className="h-3 w-3" />{player.location}
+              <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3 shrink-0" /><span className="truncate">{player.location}</span>
               </p>
             )}
           </div>
@@ -118,7 +118,7 @@ export function PlayerCard({ player, captainGroups, defaultInviteGroupId }: Prop
           </div>
         )}
 
-        <div className="flex gap-2 pt-1">
+        <div className="mt-auto flex flex-col gap-2 pt-1 min-[420px]:flex-row">
           {/* Quick invite when coming from a group page */}
           {defaultGroup && (
             <Button

@@ -19,7 +19,7 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 min-h-screen border-r border-border bg-card px-4 py-6">
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-card/90 px-4 py-6 shadow-xl shadow-background/10 backdrop-blur lg:flex">
       <Link href="/dashboard" className="text-2xl font-extrabold text-primary mb-10 px-2 block">
         SportSync
       </Link>
@@ -30,9 +30,9 @@ export function Sidebar() {
             key={href}
             href={href}
             className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
               pathname === href || pathname.startsWith(href + "/")
-                ? "bg-primary text-primary-foreground"
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/15"
                 : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             )}
           >
