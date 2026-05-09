@@ -13,7 +13,7 @@ export default async function ProfilePage() {
   if (!authUser) redirect("/login")
 
   const profile = await getProfile(authUser.id)
-  if (!profile) redirect("/login")
+  if (!profile) redirect("/profile/edit")
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">

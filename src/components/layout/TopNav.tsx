@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { getProfile } from "@/actions/profile"
 import { getAuthUser } from "@/actions/auth"
+import { prisma } from "@/lib/prisma"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -9,7 +9,9 @@ import { User, Settings, LogOut } from "lucide-react"
 
 export async function TopNav() {
   const authUser = await getAuthUser()
-  const profile = authUser ? await getProfile(authUser.id) : null
+  const profile = authUser
+    ? await prisma.user.findUnique({ where: { id: authUser.id } })
+    : null
 
   const initials = profile?.name
     ? profile.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()

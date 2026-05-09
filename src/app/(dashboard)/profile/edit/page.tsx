@@ -9,7 +9,7 @@ export default async function ProfileEditPage() {
   if (!authUser) redirect("/login")
 
   const profile = await getProfile(authUser.id)
-  if (!profile) redirect("/login")
+  if (!profile) redirect("/login") // only if upsert itself failed
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">

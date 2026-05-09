@@ -24,11 +24,43 @@ async function getAuthUserId(): Promise<string> {
 }
 
 export async function getProfile(userId?: string) {
-  const id = userId ?? (await getAuthUserId())
-  return prisma.user.findUnique({
+  const supabase = await createClient()
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser()
+
+  const id = userId ?? authUser?.id
+  if (!id) return null
+
+  // Fast path: record already exists
+  const existing = await prisma.user.findUnique({
     where: { id },
     include: { sportPreferences: true },
   })
+  if (existing) return existing
+
+  // Only auto-create when the caller is asking for their own profile
+  if (authUser?.id !== id) return null
+
+  const email = authUser.email ?? ""
+  const name =
+    authUser.user_metadata?.full_name ??
+    authUser.email?.split("@")[0] ??
+    "User"
+
+  // Another row may already exist with the same email (duplicate Supabase uid).
+  // In that case just return the existing row rather than crash.
+  try {
+    return await prisma.user.create({
+      data: { id, email, name },
+      include: { sportPreferences: true },
+    })
+  } catch {
+    return prisma.user.findFirst({
+      where: { email },
+      include: { sportPreferences: true },
+    })
+  }
 }
 
 export async function updateProfile(formData: FormData) {

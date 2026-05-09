@@ -23,7 +23,7 @@ export default async function DashboardPage() {
     getMyGroups(),
   ])
 
-  if (!profile) redirect("/login")
+  if (!profile) redirect("/profile/edit")
 
   const userSports = profile.sportPreferences.map((p) => p.sport as Sport)
   const today = new Date()
