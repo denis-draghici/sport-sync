@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SPORT_LIST, SPORT_LABELS } from "@/lib/sports"
+import { DateTimePicker } from "@/components/ui/date-time-picker"
 import { Loader2 } from "lucide-react"
 
 const schema = z.object({
@@ -86,7 +87,9 @@ export function ManualEventForm() {
             <FormField control={form.control} name="scheduledAt" render={({ field }) => (
               <FormItem>
                 <FormLabel>Date & Time <span className="text-muted-foreground">(optional)</span></FormLabel>
-                <FormControl><Input type="datetime-local" {...field} /></FormControl>
+                <FormControl>
+                  <DateTimePicker value={field.value} onChange={field.onChange} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )} />

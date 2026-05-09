@@ -14,6 +14,7 @@ import { SPORT_LABELS, VENUE_PRICE_RANGES } from "@/lib/sports"
 import { formatDateTime } from "@/lib/date"
 import { updateEvent } from "@/actions/events"
 import { toast } from "sonner"
+import { DateTimePicker } from "@/components/ui/date-time-picker"
 
 type EventWithGroup = Event & {
   group: Group & {
@@ -86,7 +87,7 @@ export function EventDetailCard({
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">Date & Time</label>
-              <Input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
+              <DateTimePicker value={scheduledAt} onChange={setScheduledAt} />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">Notes</label>

@@ -21,12 +21,12 @@ export const SPORT_EMOJIS: Record<Sport, string> = {
 }
 
 export const GROUP_SIZE_MAP: Record<Sport, { min: number; max: number; ideal: number }> = {
-  FOOTBALL: { min: 10, max: 14, ideal: 11 },
-  TENNIS: { min: 2, max: 4, ideal: 2 },
-  BASKETBALL: { min: 6, max: 10, ideal: 10 },
-  VOLLEYBALL: { min: 6, max: 12, ideal: 6 },
-  RUNNING: { min: 2, max: 20, ideal: 4 },
-  CYCLING: { min: 2, max: 20, ideal: 4 },
+  FOOTBALL: { min: 1, max: 14, ideal: 11 },
+  TENNIS: { min: 1, max: 4, ideal: 2 },
+  BASKETBALL: { min: 1, max: 10, ideal: 10 },
+  VOLLEYBALL: { min: 1, max: 12, ideal: 6 },
+  RUNNING: { min: 1, max: 20, ideal: 4 },
+  CYCLING: { min: 1, max: 20, ideal: 4 },
 }
 
 export const SKILL_LEVEL_LABELS: Record<SkillLevel, string> = {

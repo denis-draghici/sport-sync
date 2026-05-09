@@ -61,6 +61,18 @@ export async function createManualGroup(sport: Sport, inviteeIds: string[]) {
   const today = new Date()
   today.setUTCHours(0, 0, 0, 0)
 
+  // Check if a group already exists between these exact members for this sport today
+  const existingGroup = await prisma.group.findFirst({
+    where: {
+      sport,
+      availDate: today,
+      status: { in: ["FORMING", "CONFIRMED", "EVENT_CREATED"] },
+      members: { some: { userId: captainId } },
+      AND: inviteeIds.map((id) => ({ members: { some: { userId: id } } })),
+    },
+  })
+  if (existingGroup) return { error: "A group with this player already exists", groupId: existingGroup.id }
+
   const group = await prisma.$transaction(async (tx) => {
     const g = await tx.group.create({
       data: {

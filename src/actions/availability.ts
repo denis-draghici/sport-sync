@@ -44,6 +44,30 @@ export async function getTodayAvailability() {
   })
 }
 
+export async function getAvailablePlayersForSports(sports: Sport[]) {
+  const userId = await getAuthUserId()
+  const date = todayUtc()
+
+  const records = await prisma.availability.findMany({
+    where: {
+      date,
+      isAvailable: true,
+      userId: { not: userId },
+      sports: { hasSome: sports },
+    },
+    include: {
+      user: {
+        select: { id: true, name: true, avatarUrl: true, location: true, sportPreferences: true },
+      },
+    },
+  })
+
+  return records.map((r) => ({
+    ...r.user,
+    availableSports: r.sports.filter((s) => sports.includes(s)),
+  }))
+}
+
 export async function getWeekAvailability() {
   const userId = await getAuthUserId()
   const today = todayUtc()

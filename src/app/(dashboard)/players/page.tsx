@@ -2,6 +2,7 @@ import { searchPlayers } from "@/actions/players"
 import { getMyGroups } from "@/actions/groups"
 import { getAuthUser } from "@/actions/auth"
 import { redirect } from "next/navigation"
+import { Suspense } from "react"
 import { PageHeader } from "@/components/shared/PageHeader"
 import { PlayerFilters } from "@/components/players/PlayerFilters"
 import { PlayerCard } from "@/components/players/PlayerCard"
@@ -37,7 +38,9 @@ export default async function PlayersPage({ searchParams }: Props) {
         description={inviteGroupId ? "Select players to invite to your group." : "Browse players by sport and skill level, then invite them to a group."}
       />
 
-      <PlayerFilters />
+      <Suspense fallback={<div className="h-20 animate-pulse rounded-lg bg-muted" />}>
+        <PlayerFilters />
+      </Suspense>
 
       {players.length === 0 ? (
         <EmptyState

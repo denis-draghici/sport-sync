@@ -1,22 +1,27 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Sport, Availability } from "@prisma/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { setAvailability } from "@/actions/availability"
+import { setAvailability, getAvailablePlayersForSports } from "@/actions/availability"
 import { toast } from "sonner"
 import { SPORT_LIST, SPORT_LABELS, SPORT_EMOJIS } from "@/lib/sports"
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+type AvailablePlayer = { id: string; name: string; avatarUrl: string | null; location: string | null; availableSports: Sport[] }
+
 interface Props {
   todayAvailability: Availability | null
   userSports: Sport[]
+  onPlayersLoaded: (players: AvailablePlayer[], loading: boolean) => void
 }
 
-export function AvailabilityPrompt({ todayAvailability, userSports }: Props) {
+export function AvailabilityPrompt({ todayAvailability, userSports, onPlayersLoaded }: Props) {
+  const router = useRouter()
   const [pending, setPending] = useState(false)
   const [availability, setAvailabilityState] = useState(todayAvailability)
   const [selectedSports, setSelectedSports] = useState<Sport[]>(
@@ -24,6 +29,18 @@ export function AvailabilityPrompt({ todayAvailability, userSports }: Props) {
   )
 
   const availableSports = userSports.length > 0 ? userSports : SPORT_LIST
+
+  async function fetchPlayers(sports: Sport[]) {
+    onPlayersLoaded([], true)
+    const players = await getAvailablePlayersForSports(sports)
+    onPlayersLoaded(players as AvailablePlayer[], false)
+  }
+
+  useEffect(() => {
+    if (todayAvailability?.isAvailable && todayAvailability.sports.length > 0) {
+      fetchPlayers(todayAvailability.sports as Sport[])
+    }
+  }, [])
 
   function toggleSport(sport: Sport) {
     setSelectedSports((prev) =>
@@ -41,10 +58,15 @@ export function AvailabilityPrompt({ todayAvailability, userSports }: Props) {
     if (result?.success) {
       setAvailabilityState(result.availability as Availability)
       toast.success(
-        isAvailable
-          ? "You're in! Finding your match..."
-          : "Got it — see you next time!"
+        isAvailable ? "You're in! Finding your match..." : "Got it — see you next time!"
       )
+      if (isAvailable) {
+        fetchPlayers(selectedSports)
+        setTimeout(() => router.refresh(), 3000)
+        setTimeout(() => router.refresh(), 7000)
+      } else {
+        onPlayersLoaded([], false)
+      }
     } else {
       toast.error("Something went wrong")
     }

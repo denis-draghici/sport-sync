@@ -4,7 +4,7 @@ import { getTodayAvailability } from "@/actions/availability"
 import { getMyGroups } from "@/actions/groups"
 import { redirect } from "next/navigation"
 import { PageHeader } from "@/components/shared/PageHeader"
-import { AvailabilityPrompt } from "@/components/dashboard/AvailabilityPrompt"
+import { AvailabilitySection } from "@/components/dashboard/AvailabilitySection"
 import { MatchCard } from "@/components/dashboard/MatchCard"
 import { EmptyState } from "@/components/shared/EmptyState"
 import { Button } from "@/components/ui/button"
@@ -35,7 +35,7 @@ export default async function DashboardPage() {
         description={formatDateLabel(today)}
       />
 
-      <AvailabilityPrompt
+      <AvailabilitySection
         todayAvailability={todayAvailability}
         userSports={userSports}
       />

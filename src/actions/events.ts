@@ -46,13 +46,10 @@ export async function getMyEvents() {
 }
 
 export async function getEvent(eventId: string) {
-  const userId = await getAuthUserId()
+  await getAuthUserId()
 
   const event = await prisma.event.findFirst({
-    where: {
-      id: eventId,
-      group: { members: { some: { userId } } },
-    },
+    where: { id: eventId },
     include: {
       group: {
         include: {
@@ -109,6 +106,51 @@ export async function updateEvent(eventId: string, formData: FormData) {
   revalidatePath(`/events/${eventId}`)
   revalidatePath("/events")
   return { success: true, event: updated }
+}
+
+export async function getAvailableEvents() {
+  const userId = await getAuthUserId()
+
+  return prisma.event.findMany({
+    where: {
+      group: {
+        status: { not: "CANCELLED" },
+        members: { none: { userId } },
+      },
+    },
+    include: {
+      group: {
+        include: {
+          members: { include: { user: true } },
+          captain: true,
+        },
+      },
+    },
+    orderBy: { scheduledAt: "asc" },
+  })
+}
+
+export async function joinEvent(eventId: string) {
+  const userId = await getAuthUserId()
+
+  const event = await prisma.event.findFirst({
+    where: {
+      id: eventId,
+      group: { status: { not: "CANCELLED" } },
+    },
+    include: { group: true },
+  })
+  if (!event) return { error: "Event not found" }
+
+  const already = await prisma.groupMember.findUnique({
+    where: { groupId_userId: { groupId: event.groupId, userId } },
+  })
+  if (already) return { error: "You already joined this event" }
+
+  await prisma.groupMember.create({ data: { groupId: event.groupId, userId } })
+
+  revalidatePath("/events")
+  return { success: true }
 }
 
 export async function createManualEvent(formData: FormData) {
