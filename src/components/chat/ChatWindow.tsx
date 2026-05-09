@@ -18,42 +18,49 @@ export function ChatWindow({ groupId, initialMessages, currentUserId }: Props) {
   const [messages, setMessages] = useState<MessageWithUser[]>(initialMessages)
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
+  const channelRef = useRef<ReturnType<typeof supabaseRef.current.channel> | null>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
   useEffect(() => {
+    const supabase = supabaseRef.current
     const channel = supabase
-      .channel(`group-chat-${groupId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `group_id=eq.${groupId}`,
-        },
-        (payload) => {
-          const newMsg = payload.new as MessageWithUser
-          // Only add if not already present (avoid duplicate from own sends)
-          setMessages((prev) =>
-            prev.find((m) => m.id === newMsg.id) ? prev : [...prev, newMsg]
-          )
-        }
-      )
+      .channel(`group-chat-${groupId}`, { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "new-message" }, ({ payload }) => {
+        const msg = payload as MessageWithUser
+        setMessages((prev) =>
+          prev.find((m) => m.id === msg.id) ? prev : [...prev, msg]
+        )
+      })
       .subscribe()
+
+    channelRef.current = channel
 
     return () => {
       supabase.removeChannel(channel)
+      channelRef.current = null
     }
-  }, [groupId, supabase])
+  }, [groupId])
 
   async function handleSend(content: string) {
     setSending(true)
     const result = await sendMessage(groupId, content)
-    if (result?.error) toast.error(result.error)
+    if (result?.error) {
+      toast.error(result.error)
+    } else if (result?.message) {
+      const msg = result.message as MessageWithUser
+      setMessages((prev) =>
+        prev.find((m) => m.id === msg.id) ? prev : [...prev, msg]
+      )
+      channelRef.current?.send({
+        type: "broadcast",
+        event: "new-message",
+        payload: msg,
+      })
+    }
     setSending(false)
   }
 

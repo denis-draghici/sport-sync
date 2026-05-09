@@ -2,32 +2,48 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { confirmParticipation } from "@/actions/groups"
+import { confirmParticipation, unconfirmParticipation } from "@/actions/groups"
 import { toast } from "sonner"
-import { CheckCircle, Loader2 } from "lucide-react"
+import { CheckCircle, XCircle, Loader2 } from "lucide-react"
 
-export function ConfirmButton({ groupId }: { groupId: string }) {
+interface Props {
+  groupId: string
+  isConfirmed: boolean
+}
+
+export function ConfirmButton({ groupId, isConfirmed }: Props) {
   const [pending, setPending] = useState(false)
-  const [confirmed, setConfirmed] = useState(false)
 
-  async function handleConfirm() {
+  async function handleToggle() {
     setPending(true)
-    const result = await confirmParticipation(groupId)
-    if (result?.success) {
-      toast.success("You're confirmed!")
-      setConfirmed(true)
+    if (isConfirmed) {
+      const result = await unconfirmParticipation(groupId)
+      if (result?.success) toast.info("Response updated — not going")
+      else toast.error("Failed to update response")
     } else {
-      toast.error("Failed to confirm")
+      const result = await confirmParticipation(groupId)
+      if (result?.success) toast.success("You're confirmed!")
+      else toast.error("Failed to confirm")
     }
     setPending(false)
   }
 
-  if (confirmed) return null
-
   return (
-    <Button size="sm" variant="outline" className="w-full gap-2" onClick={handleConfirm} disabled={pending}>
-      {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />}
-      Confirm I&apos;m coming
+    <Button
+      size="sm"
+      variant={isConfirmed ? "secondary" : "outline"}
+      className="w-full gap-2"
+      onClick={handleToggle}
+      disabled={pending}
+    >
+      {pending ? (
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+      ) : isConfirmed ? (
+        <XCircle className="h-3.5 w-3.5" />
+      ) : (
+        <CheckCircle className="h-3.5 w-3.5" />
+      )}
+      {isConfirmed ? "Cancel confirmation" : "Confirm I'm coming"}
     </Button>
   )
 }

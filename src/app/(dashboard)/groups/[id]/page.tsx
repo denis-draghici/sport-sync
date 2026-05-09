@@ -6,14 +6,13 @@ import { ChatWindow } from "@/components/chat/ChatWindow"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { UserAvatar } from "@/components/shared/UserAvatar"
 import { SportIcon } from "@/components/shared/SportIcon"
-import { Crown, Calendar, MapPin, UserPlus } from "lucide-react"
+import { Calendar, MapPin, UserPlus } from "lucide-react"
 import { SPORT_LABELS } from "@/lib/sports"
 import { formatDateLabel } from "@/lib/date"
 import Link from "next/link"
 import type { MessageWithUser } from "@/types"
-import { ConfirmButton } from "@/components/groups/ConfirmButton"
+import { GroupMembersLive } from "@/components/groups/GroupMembersLive"
 
 export default async function GroupPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -28,7 +27,6 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
   }
 
   const messages = await getMessageHistory(id)
-  const member = group.members.find((m) => m.userId === authUser.id)
   const isCaptain = group.captainId === authUser.id
 
   return (
@@ -70,14 +68,6 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
                 </Link>
               </Button>
             )}
-            {!member?.confirmedAt && (
-              <ConfirmButton groupId={group.id} />
-            )}
-            {member?.confirmedAt && (
-              <Badge variant="secondary" className="text-xs text-primary w-full justify-center">
-                ✓ Confirmed
-              </Badge>
-            )}
           </CardContent>
         </Card>
 
@@ -88,19 +78,13 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
               {group.members.length} Players
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2.5">
-            {group.members.map((m) => (
-              <div key={m.userId} className="flex items-center gap-2.5">
-                <UserAvatar name={m.user.name} avatarUrl={m.user.avatarUrl} size="sm" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{m.user.name}</p>
-                  {m.confirmedAt && <p className="text-xs text-primary">✓ Confirmed</p>}
-                </div>
-                {m.userId === group.captainId && (
-                  <Crown className="h-3.5 w-3.5 text-primary shrink-0" />
-                )}
-              </div>
-            ))}
+          <CardContent>
+            <GroupMembersLive
+              groupId={group.id}
+              initialMembers={group.members as any}
+              captainId={group.captainId}
+              currentUserId={authUser.id}
+            />
           </CardContent>
         </Card>
       </div>

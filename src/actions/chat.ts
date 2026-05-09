@@ -31,6 +31,15 @@ export async function sendMessage(groupId: string, content: string) {
   return { success: true, message }
 }
 
+export async function getMessageById(messageId: string) {
+  await getAuthUserId()
+
+  return prisma.message.findUnique({
+    where: { id: messageId },
+    include: { user: { select: { id: true, name: true, avatarUrl: true } } },
+  })
+}
+
 export async function getMessageHistory(groupId: string, limit = 50) {
   const userId = await getAuthUserId()
 

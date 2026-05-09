@@ -79,3 +79,15 @@ export async function confirmParticipation(groupId: string) {
   revalidatePath(`/groups/${groupId}`)
   return { success: true }
 }
+
+export async function unconfirmParticipation(groupId: string) {
+  const userId = await getAuthUserId()
+
+  await prisma.groupMember.update({
+    where: { groupId_userId: { groupId, userId } },
+    data: { confirmedAt: null },
+  })
+
+  revalidatePath(`/groups/${groupId}`)
+  return { success: true }
+}
