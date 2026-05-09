@@ -5,8 +5,6 @@ import { PageHeader } from "@/components/shared/PageHeader"
 import { EventDetailCard } from "@/components/events/EventDetailCard"
 import { VenueSuggestList } from "@/components/events/VenueSuggestList"
 import { PollCard } from "@/components/groups/PollCard"
-import { WeatherWidget } from "@/components/events/WeatherWidget"
-import { getWeather } from "@/lib/weather/openweather"
 import { recommendVenues } from "@/lib/ai/venue-recommender"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -26,13 +24,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
 
   const isCaptain = event.group.captainId === authUser.id
 
-  // Parallel: weather + AI venue recommendations
-  const [weather, venueRecommendations] = await Promise.all([
-    event.lat && event.lng ? getWeather(event.lat, event.lng) : Promise.resolve(null),
-    isCaptain && event.group.captain.location
-      ? recommendVenues(event.sport, event.group.members.length, event.group.captain.location)
-      : Promise.resolve([]),
-  ])
+  const venueRecommendations = isCaptain && event.group.captain.location
+    ? await recommendVenues(event.sport, event.group.members.length, event.group.captain.location)
+    : []
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -46,8 +40,6 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           </Button>
         }
       />
-
-      {weather && <WeatherWidget weather={weather} />}
 
       <EventDetailCard event={event as any} currentUserId={authUser.id} isCaptain={isCaptain} />
 

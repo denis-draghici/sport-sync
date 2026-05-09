@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { UserAvatar } from "@/components/shared/UserAvatar"
 import { SportIcon } from "@/components/shared/SportIcon"
-import { Crown, Calendar, MapPin } from "lucide-react"
+import { Crown, Calendar, MapPin, UserPlus } from "lucide-react"
 import { SPORT_LABELS } from "@/lib/sports"
 import { formatDateLabel } from "@/lib/date"
 import Link from "next/link"
@@ -60,6 +60,14 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
             {group.event && (
               <Button size="sm" className="w-full" asChild>
                 <Link href={`/events/${group.event.id}`}>Manage event</Link>
+              </Button>
+            )}
+            {isCaptain && (
+              <Button size="sm" variant="secondary" className="w-full" asChild>
+                <Link href={`/players?invite=${group.id}`}>
+                  <UserPlus className="h-3.5 w-3.5 mr-1.5" />
+                  Invite players
+                </Link>
               </Button>
             )}
             {!member?.confirmedAt && (

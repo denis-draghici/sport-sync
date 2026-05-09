@@ -1,4 +1,4 @@
-import { anthropic } from "./client"
+import { getModel } from "./client"
 import { SPORT_LABELS } from "@/lib/sports"
 import { Sport } from "@prisma/client"
 
@@ -14,20 +14,14 @@ export async function recommendVenues(
   location: string
 ): Promise<VenueRecommendation[]> {
   try {
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 512,
-      messages: [
-        {
-          role: "user",
-          content: `Suggest 3 venue types for a ${SPORT_LABELS[sport]} game with ${groupSize} players near ${location}.
+    const model = getModel()
+    const result = await model.generateContent(
+      `Suggest 3 venue types for a ${SPORT_LABELS[sport]} game with ${groupSize} players near ${location}.
 Return ONLY a JSON array of objects with keys: "venueType", "searchQuery" (for Google Places), "tips".
-Example: [{"venueType":"Indoor Sports Hall","searchQuery":"indoor sports hall near ${location}","tips":"Book in advance on weekends"}]`,
-        },
-      ],
-    })
+Example: [{"venueType":"Indoor Sports Hall","searchQuery":"indoor sports hall near ${location}","tips":"Book in advance on weekends"}]`
+    )
 
-    const text = message.content[0].type === "text" ? message.content[0].text : "[]"
+    const text = result.response.text()
     const match = text.match(/\[[\s\S]*\]/)
     if (!match) return []
 

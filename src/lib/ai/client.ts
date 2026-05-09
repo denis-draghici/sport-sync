@@ -1,9 +1,13 @@
-import Anthropic from "@anthropic-ai/sdk"
+import { GoogleGenerativeAI } from "@google/generative-ai"
 
-const globalForAnthropic = globalThis as unknown as { anthropic: Anthropic }
+const globalForGemini = globalThis as unknown as { gemini: GoogleGenerativeAI }
 
-export const anthropic =
-  globalForAnthropic.anthropic ??
-  new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+export const gemini =
+  globalForGemini.gemini ??
+  new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "")
 
-if (process.env.NODE_ENV !== "production") globalForAnthropic.anthropic = anthropic
+if (process.env.NODE_ENV !== "production") globalForGemini.gemini = gemini
+
+export function getModel(modelName = "gemini-2.0-flash") {
+  return gemini.getGenerativeModel({ model: modelName })
+}

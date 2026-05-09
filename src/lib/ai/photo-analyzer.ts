@@ -1,32 +1,26 @@
 import { Sport } from "@prisma/client"
-import { anthropic } from "./client"
+import { getModel } from "./client"
 import { SPORT_LIST } from "@/lib/sports"
 
 export async function analyzePhotoForSports(imageUrl: string): Promise<Sport[]> {
   try {
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 256,
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "image",
-              source: { type: "url", url: imageUrl },
-            },
-            {
-              type: "text",
-              text: `Look at this profile photo and identify any sports the person might play based on clothing, equipment, or context.
+    const res = await fetch(imageUrl)
+    if (!res.ok) return []
+    const buffer = await res.arrayBuffer()
+    const base64 = Buffer.from(buffer).toString("base64")
+    const mimeType = res.headers.get("content-type") ?? "image/jpeg"
+
+    const model = getModel("gemini-2.0-flash")
+    const result = await model.generateContent([
+      {
+        inlineData: { data: base64, mimeType },
+      },
+      `Look at this profile photo and identify any sports the person might play based on clothing, equipment, or context.
 Available sports: ${SPORT_LIST.join(", ")}
 Respond ONLY with a JSON array of sport names, e.g. ["FOOTBALL","RUNNING"]. If none are visible, return [].`,
-            },
-          ],
-        },
-      ],
-    })
+    ])
 
-    const text = message.content[0].type === "text" ? message.content[0].text : "[]"
+    const text = result.response.text()
     const match = text.match(/\[[\s\S]*\]/)
     if (!match) return []
 

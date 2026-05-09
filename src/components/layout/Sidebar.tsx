@@ -3,12 +3,13 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, User, CalendarDays, Users, LogOut } from "lucide-react"
+import { LayoutDashboard, User, CalendarDays, Users, UserSearch, LogOut } from "lucide-react"
 import { signOut } from "@/actions/auth"
 import { Button } from "@/components/ui/button"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/players", label: "Find Players", icon: UserSearch },
   { href: "/events", label: "Events", icon: CalendarDays },
   { href: "/groups", label: "My Groups", icon: Users },
   { href: "/profile", label: "Profile", icon: User },

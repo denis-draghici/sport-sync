@@ -1,4 +1,4 @@
-import { anthropic } from "./client"
+import { getModel } from "./client"
 
 export interface UserProfile {
   id: string
@@ -20,13 +20,9 @@ export async function scoreCompatibility(
     .join("\n")
 
   try {
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 512,
-      messages: [
-        {
-          role: "user",
-          content: `Rate the group compatibility of these sports players (0-100 score each).
+    const model = getModel()
+    const result = await model.generateContent(
+      `Rate the group compatibility of these sports players (0-100 score each).
 Consider: skill level similarity, bio personality match, and sport preferences.
 
 Players:
@@ -34,12 +30,10 @@ ${profiles}
 
 Return ONLY a JSON object mapping each player ID prefix to their group fit score, e.g.:
 {"abc12345": 85, "def67890": 72}
-Use only the first 8 chars of each ID as the key.`,
-        },
-      ],
-    })
+Use only the first 8 chars of each ID as the key.`
+    )
 
-    const text = message.content[0].type === "text" ? message.content[0].text : "{}"
+    const text = result.response.text()
     const match = text.match(/\{[\s\S]+\}/)
     if (!match) return {}
 
