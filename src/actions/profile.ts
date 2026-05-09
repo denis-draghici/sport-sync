@@ -41,7 +41,7 @@ export async function updateProfile(formData: FormData) {
   }
 
   const parsed = profileSchema.safeParse(raw)
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   await prisma.user.update({
     where: { id: userId },

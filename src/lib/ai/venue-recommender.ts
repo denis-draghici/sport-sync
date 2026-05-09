@@ -28,7 +28,7 @@ Example: [{"venueType":"Indoor Sports Hall","searchQuery":"indoor sports hall ne
     })
 
     const text = message.content[0].type === "text" ? message.content[0].text : "[]"
-    const match = text.match(/\[[\s\S]*\]/s)
+    const match = text.match(/\[[\s\S]*\]/)
     if (!match) return []
 
     return JSON.parse(match[0])

@@ -40,7 +40,7 @@ Use only the first 8 chars of each ID as the key.`,
     })
 
     const text = message.content[0].type === "text" ? message.content[0].text : "{}"
-    const match = text.match(/\{[^}]+\}/s)
+    const match = text.match(/\{[\s\S]+\}/)
     if (!match) return {}
 
     return JSON.parse(match[0])

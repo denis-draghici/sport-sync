@@ -96,7 +96,7 @@ export async function updateEvent(eventId: string, formData: FormData) {
   }
 
   const parsed = eventSchema.safeParse(raw)
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const updated = await prisma.event.update({
     where: { id: eventId },

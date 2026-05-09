@@ -21,7 +21,7 @@ Respond ONLY with a valid JSON array of sport names from the list, e.g. ["FOOTBA
     })
 
     const text = message.content[0].type === "text" ? message.content[0].text : "[]"
-    const match = text.match(/\[.*\]/s)
+    const match = text.match(/\[[\s\S]*\]/)
     if (!match) return []
 
     const parsed: string[] = JSON.parse(match[0])
